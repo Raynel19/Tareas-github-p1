@@ -1,58 +1,75 @@
 ﻿using System;
 
-class Program
+class DemoDataTypes
 {
     static void Main(string[] args)
     {
-        // One-line comment: variable declarations and printing values
+        // ===== Variable declarations with values =====
 
-        int myInt = 10;
-        double myDouble = 25.75;
-        char myChar = 'A';
-        bool myBool = true;
-        string myString = "Hello C#";
+        int age = 18;
+        decimal price = 150.99m;
+        char letter = 'Z';
+        bool isActive = false;
+        string message = "C# practice program";
 
-        Console.WriteLine("Different variable types:");
-        Console.WriteLine("Int: " + myInt);
-        Console.WriteLine("Double: " + myDouble);
-        Console.WriteLine("Char: " + myChar);
-        Console.WriteLine("Bool: " + myBool);
-        Console.WriteLine("String: " + myString);
+        Console.WriteLine("=== Variable values ===");
+        Console.WriteLine($"Age: {age}");
+        Console.WriteLine($"Price: {price}");
+        Console.WriteLine($"Letter: {letter}");
+        Console.WriteLine($"IsActive: {isActive}");
+        Console.WriteLine($"Message: {message}");
 
         /*
-           Multi-line comment:
-           Constant declaration and test
+           Constant example section
+           Constants cannot be changed after declaration
         */
 
-        const double PI = 3.14159;
-        Console.WriteLine("\nConstant PI: " + PI);
+        const int MAX_USERS = 100;
+        Console.WriteLine("\nConstant MAX_USERS: " + MAX_USERS);
 
-        // Uncommenting the next line will cause a compile-time error
-        // PI = 3.15;
+        // If you try to change it, the program will not compile
+        // MAX_USERS = 200;
 
-        // Integer operations: increment, decrement, arithmetic
-        int number = 20;
-        number++; // increment
-        number--; // decrement
-        int sum = number + 5;
-        int product = number * 2;
+        // ===== Integer math operations =====
 
-        Console.WriteLine("\nInteger operations:");
-        Console.WriteLine("Number: " + number);
-        Console.WriteLine("Sum (+5): " + sum);
-        Console.WriteLine("Product (*2): " + product);
+        int counter = 5;
 
-        // Float and byte with casting
-        float myFloat = 10152466.25f;
-        byte myByte = (byte)(5 + myFloat); // explicit cast required
+        Console.WriteLine("\n=== Integer operations ===");
+        Console.WriteLine("Start value: " + counter);
 
-        Console.WriteLine("\nFloat and byte:");
-        Console.WriteLine("Float value: " + myFloat);
-        Console.WriteLine("Byte value (casted): " + myByte);
+        counter += 1; // increment using +=
+        Console.WriteLine("After increment: " + counter);
 
-        // Print system date and time
-        DateTime now = DateTime.Now;
-        Console.WriteLine("\nSystem date and time: " + now);
+        counter -= 2; // decrement using -=
+        Console.WriteLine("After decrement: " + counter);
+
+        int square = counter * counter;
+        int division = square / 2;
+
+        Console.WriteLine("Square: " + square);
+        Console.WriteLine("Square / 2: " + division);
+
+        // ===== Float and byte conversion example =====
+
+        float bigFloat = 10152466.25f;
+        float sumFloat = bigFloat + 5;
+
+        Console.WriteLine("\n=== Float and byte conversion ===");
+        Console.WriteLine("Float formatted: " + bigFloat.ToString("F2"));
+        Console.WriteLine("Float + 5: " + sumFloat.ToString("F2"));
+
+        // Explicit cast to byte (overflow will occur)
+        byte smallByte = (byte)sumFloat;
+        Console.WriteLine("Byte after cast: " + smallByte);
+
+        // ===== System date and time =====
+
+        DateTime systemNow = DateTime.Now;
+        Console.WriteLine("\nSystem date: " + systemNow.ToShortDateString());
+        Console.WriteLine("System time: " + systemNow.ToLongTimeString());
+
+        Console.WriteLine("\nPress any key to exit...");
+        Console.ReadKey();
     }
 }
 
