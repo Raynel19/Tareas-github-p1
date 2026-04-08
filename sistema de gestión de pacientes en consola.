@@ -1,0 +1,207 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+List<PersonRecord> registry = new List<PersonRecord>();
+bool systemActive = true;
+
+Console.WriteLine("=== Patient Management Console ===");
+
+while (systemActive)
+{
+    DisplayOptions();
+
+    int optionSelected;
+
+    if (!int.TryParse(Console.ReadLine(), out optionSelected))
+    {
+        Console.WriteLine("Input must be numeric.");
+        continue;
+    }
+
+    switch (optionSelected)
+    {
+        case 1:
+            RegisterNew();
+            break;
+        case 2:
+            ListAll();
+            break;
+        case 3:
+            FindById();
+            break;
+        case 4:
+            UpdateInfo();
+            break;
+        case 5:
+            RemoveEntry();
+            break;
+        case 6:
+            systemActive = false;
+            break;
+        default:
+            Console.WriteLine("Option not recognized.");
+            break;
+    }
+}
+
+void DisplayOptions()
+{
+    Console.WriteLine("\n" + new string('*', 45));
+    Console.WriteLine("PATIENT CONTROL PANEL");
+    Console.WriteLine("Sistema de Registro Clínico");
+    Console.WriteLine(new string('*', 45));
+    Console.WriteLine("1 - Add new patient");
+    Console.WriteLine("2 - Show all records");
+    Console.WriteLine("3 - Find patient");
+    Console.WriteLine("4 - Modify patient");
+    Console.WriteLine("5 - Delete patient");
+    Console.WriteLine("6 - Close system");
+    Console.Write("Select: ");
+}
+
+void RegisterNew()
+{
+    int newId = registry.Count + 1;
+
+    Console.Write("Full Name: ");
+    string fullName = Console.ReadLine();
+
+    Console.Write("ID Number: ");
+    string idNumber = Console.ReadLine();
+
+    Console.Write("Age: ");
+    if (!int.TryParse(Console.ReadLine(), out int ageValue))
+    {
+        Console.WriteLine("Age format incorrect.");
+        return;
+    }
+
+    Console.Write("Contact Number: ");
+    string contact = Console.ReadLine();
+
+    Console.Write("Medical Condition: ");
+    string condition = Console.ReadLine();
+
+    registry.Add(new PersonRecord(newId, fullName, idNumber, ageValue, contact, condition));
+
+    Console.WriteLine("Record successfully added.");
+}
+
+void ListAll()
+{
+    if (registry.Count == 0)
+    {
+        Console.WriteLine("No records available.");
+        return;
+    }
+
+    foreach (var item in registry)
+    {
+        Console.WriteLine($"[{item.Id}] {item.Name} | {item.Cedula} | {item.Age} yrs | {item.Phone} | {item.Disease}");
+    }
+}
+
+void FindById()
+{
+    Console.Write("Enter patient ID: ");
+
+    if (!int.TryParse(Console.ReadLine(), out int searchId))
+    {
+        Console.WriteLine("Invalid input.");
+        return;
+    }
+
+    var result = registry.FirstOrDefault(r => r.Id == searchId);
+
+    if (result == null)
+    {
+        Console.WriteLine("No match found.");
+        return;
+    }
+
+    Console.WriteLine($"Name: {result.Name}\nID: {result.Cedula}\nAge: {result.Age}\nPhone: {result.Phone}\nCondition: {result.Disease}");
+}
+
+void UpdateInfo()
+{
+    Console.Write("ID to update: ");
+
+    if (!int.TryParse(Console.ReadLine(), out int editId))
+    {
+        Console.WriteLine("Invalid input.");
+        return;
+    }
+
+    var record = registry.FirstOrDefault(r => r.Id == editId);
+
+    if (record == null)
+    {
+        Console.WriteLine("Patient does not exist.");
+        return;
+    }
+
+    Console.Write("Updated Name: ");
+    record.Name = Console.ReadLine();
+
+    Console.Write("Updated ID: ");
+    record.Cedula = Console.ReadLine();
+
+    Console.Write("Updated Age: ");
+    if (!int.TryParse(Console.ReadLine(), out int updatedAge))
+    {
+        Console.WriteLine("Invalid age.");
+        return;
+    }
+    record.Age = updatedAge;
+
+    Console.Write("Updated Phone: ");
+    record.Phone = Console.ReadLine();
+
+    Console.Write("Updated Condition: ");
+    record.Disease = Console.ReadLine();
+
+    Console.WriteLine("Information updated correctly.");
+}
+
+void RemoveEntry()
+{
+    Console.Write("ID to delete: ");
+
+    if (!int.TryParse(Console.ReadLine(), out int deleteId))
+    {
+        Console.WriteLine("Invalid input.");
+        return;
+    }
+
+    var record = registry.FirstOrDefault(r => r.Id == deleteId);
+
+    if (record == null)
+    {
+        Console.WriteLine("Patient not found.");
+        return;
+    }
+
+    registry.Remove(record);
+    Console.WriteLine("Record removed.");
+}
+
+class PersonRecord
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Cedula { get; set; }
+    public int Age { get; set; }
+    public string Phone { get; set; }
+    public string Disease { get; set; }
+
+    public PersonRecord(int id, string name, string cedula, int age, string phone, string disease)
+    {
+        Id = id;
+        Name = name;
+        Cedula = cedula;
+        Age = age;
+        Phone = phone;
+        Disease = disease;
+    }
+}
