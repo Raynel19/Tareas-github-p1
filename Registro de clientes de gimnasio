@@ -1,0 +1,126 @@
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+
+// ===== ENTITIES =====
+public abstract class Person
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int Age { get; set; }
+
+    public abstract void ShowInfo();
+}
+
+public class Client : Person
+{
+    public string MembershipType { get; set; }
+    public string Status { get; set; }
+
+    public Client(int id, string name, int age, string membershipType, string status)
+    {
+        Id = id;
+        Name = name;
+        Age = age;
+        MembershipType = membershipType;
+        Status = status;
+    }
+
+    public override void ShowInfo()
+    {
+        Console.WriteLine($"Cliente: {Name}, Edad: {Age}, Membresía: {MembershipType}, Estado: {Status}");
+    }
+}
+
+// ===== DATA =====
+public class DatabaseConnection
+{
+    private string connectionString = "Server=RAYNEL\\SQLEXPRESS;Database=GymDB;Trusted_Connection=True;";
+
+    public SqlConnection GetConnection()
+    {
+        return new SqlConnection(connectionString);
+    }
+}
+
+public class ClientRepository
+{
+    private DatabaseConnection db = new DatabaseConnection();
+
+    public void AddClient(Client client)
+    {
+        using (SqlConnection conn = db.GetConnection())
+        {
+            conn.Open();
+
+            string query = "INSERT INTO Clients (Name, Age, MembershipType, Status) VALUES (@Name, @Age, @MembershipType, @Status)";
+
+            SqlCommand cmd = new SqlCommand(query, conn);
+
+            cmd.Parameters.AddWithValue("@Name", client.Name);
+            cmd.Parameters.AddWithValue("@Age", client.Age);
+            cmd.Parameters.AddWithValue("@MembershipType", client.MembershipType);
+            cmd.Parameters.AddWithValue("@Status", client.Status);
+
+            cmd.ExecuteNonQuery();
+        }
+    }
+
+    public List<Client> GetClients()
+    {
+        List<Client> list = new List<Client>();
+
+        using (SqlConnection conn = db.GetConnection())
+        {
+            conn.Open();
+
+            SqlCommand cmd = new SqlCommand("SELECT * FROM Clients", conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                list.Add(new Client(
+                    (int)reader["Id"],
+                    reader["Name"].ToString(),
+                    (int)reader["Age"],
+                    reader["MembershipType"].ToString(),
+                    reader["Status"].ToString()
+                ));
+            }
+        }
+
+        return list;
+    }
+}
+
+// ===== BUSINESS =====
+public class ClientService
+{
+    private ClientRepository repo = new ClientRepository();
+
+    public void AddClient(Client client) => repo.AddClient(client);
+
+    public List<Client> ListClients() => repo.GetClients();
+}
+
+// ===== MAIN =====
+class Program
+{
+    static void Main()
+    {
+        ClientService service = new ClientService();
+
+        // Cliente de prueba
+        Client nuevo = new Client(0, "Juan Pérez", 25, "Mensual", "Activo");
+        service.AddClient(nuevo);
+
+        Console.WriteLine("Lista de clientes:");
+
+        var clients = service.ListClients();
+
+        foreach (var c in clients)
+        {
+            c.ShowInfo();
+        }
+    }
+}
